@@ -1,4 +1,4 @@
-# one
+# creating a basic server 
 
 A simple Express.js REST API for managing a list of students. Built as a learning project to demonstrate a clean Express setup with middleware, routing, controllers, logging, rate limiting, and centralized error handling.
 
