@@ -1,98 +1,32 @@
-# creating a basic server 
+# MVC Books API (In-Memory)
 
-A simple Express.js REST API for managing a list of students. Built as a learning project to demonstrate a clean Express setup with middleware, routing, controllers, logging, rate limiting, and centralized error handling.
+A simple RESTful API built with Node.js and Express to demonstrate the Model-View-Controller (MVC) architecture. This project uses an in-memory array for data storage and includes basic input validation and proper HTTP status codes.
 
-## Project Structure
-
-```
-one/
-├── server.js              # App entry point — Express setup, middleware, routes, error handler
-├── studentRoutes.js       # Defines student-related routes (GET /, POST /, GET /error)
-├── studentController.js   # Controller logic for students (in-memory data store)
-├── logger.js              # Request logging middleware
-├── errorHandler.js        # Global error-handling middleware
-├── package.json           # Dependencies and npm scripts
-├── package-lock.json      # Locked dependency tree
-└── node_modules/          # Installed dependencies
-```
+## Architecture (MVC)
+- **Model:** Manages the in-memory array and data logic (`models/bookModel.js`).
+- **View:** The JSON payloads returned to the client.
+- **Controller:** Handles request parsing, input validation, and HTTP responses (`controllers/bookController.js`).
 
 ## Prerequisites
+- Node.js installed
+- Postman (for API testing)
 
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- npm (bundled with Node.js)
-
-## Installation
-
-Dependencies are already installed in `node_modules/`. If you need to reinstall:
-
-```bash
-npm install
-```
-
-## Running the Server
-
-From inside the `one/` directory:
-
-```bash
-# Production
-npm start
-
-# Development (auto-restart on file changes)
-npm run dev
-```
-
-The server starts on `http://localhost:5000` by default. To use a different port, set a `PORT` environment variable.
+## Setup and Run
+1. Clone this repository.
+2. Run `npm install` to install Express.
+3. Run `node app.js` to start the server on port 3000.
 
 ## API Endpoints
 
-| Method | Path              | Description                                       |
-| ------ | ----------------- | ------------------------------------------------- |
-| GET    | `/students`       | Retrieve the list of students                     |
-| POST   | `/students`       | Add a new student (requires `{ "name": "..." }`) |
-| GET    | `/students/error` | Triggers a test 500 error to demo the error handler |
+| Method | Endpoint | Description | Status Codes |
+|---|---|---|---|
+| GET | `/api/books` | Retrieves all books | 200 OK |
+| GET | `/api/books/:id` | Retrieves a specific book by ID | 200 OK, 404 Not Found |
+| POST | `/api/books` | Creates a new book | 201 Created, 400 Bad Request |
+| PUT | `/api/books/:id` | Updates an existing book | 200 OK, 400 Bad Request, 404 Not Found |
+| DELETE | `/api/books/:id` | Deletes a book by ID | 200 OK, 404 Not Found |
 
-### Example: add a student
-
-```bash
-curl -X POST http://localhost:5000/students \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Bob"}'
-```
-
-### Example: list students
-
-```bash
-curl http://localhost:5000/students
-```
-
-## Configuration
-
-A `.env` file in the `one/` directory can override defaults. Currently supported:
-
-| Variable | Default | Purpose        |
-| -------- | ------- | -------------- |
-| `PORT`   | `5000`  | Server port    |
-
-Create a `.env` file:
-
-```
-PORT=5000
-```
-
-## Middleware
-
-The app wires up the following middleware in order (`server.js`):
-
-1. `cors()` — enable Cross-Origin Resource Sharing.
-2. `express.json()` — parse JSON request bodies.
-3. Custom `logger` — logs `METHOD URL` for every request.
-4. `express-rate-limit` — limits each client to **5 requests per minute**.
-5. Custom `errorHandler` — catches thrown errors and returns `{ success: false, message }` with status `500`.
-
-## Notes
-
-- Data is stored **in memory only** — restarting the server resets the student list.
-- All errors thrown by controllers (synchronous or via `next(err)`) flow to the central `errorHandler`.
-- Unknown routes return a 404 JSON response: `{ "message": "Route Not Found" }`.
-
+## Input Validation
+- `POST /api/books` requires a JSON body with both `title` (string) and `author` (string).
+- `PUT /api/books/:id` requires at least one field (`title` or `author`) to process an update.
 
